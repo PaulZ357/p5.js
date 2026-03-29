@@ -927,6 +927,16 @@ p5.prototype._preloadMethods = {
   loadShader: p5.prototype
 };
 
+//Shadow properties and method
+p5.prototype._shadowEnabled = false;
+p5.prototype._shadowOffset = 10;
+
+p5.prototype.addShadow = function(enabled = true, offset = 50) {
+  this._shadowEnabled = enabled;
+  this._shadowOffset = offset;
+};
+
+
 p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
 
 p5.prototype._registeredPreloadMethods = {};

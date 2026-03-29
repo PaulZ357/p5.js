@@ -553,6 +553,20 @@ p5.prototype._renderEllipse = function(x, y, w, h, detailX) {
   const vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
   this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
+  //Shadow / mirrored ellipse
+  if (this._shadowEnabled) {
+    const offset = this._shadowOffset;
+    this.push();
+    this.fill(0, 0, 0, 50); // semi-transparent shadow
+    this._renderer.ellipse([
+      vals.x,
+      vals.y + offset,
+      vals.w,
+      vals.h,
+      detailX
+    ]);
+    this.pop();
+  }
   //accessible Outputs
   if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
     this._accsOutput('ellipse', [vals.x, vals.y, vals.w, vals.h]);
@@ -1373,6 +1387,20 @@ p5.prototype._renderRect = function() {
     }
     this._renderer.rect(args);
 
+    const shadowOffset = this._shadowOffset;
+    // Shadow / mirrored rectangle
+    if (this._shadowEnabled) {
+      this.push();
+      this.fill(0, 0, 0, 50);
+      this._renderer.rect([
+        vals.x,
+        vals.y + shadowOffset,
+        vals.w,
+        vals.h,
+        ...args.slice(4)
+      ]);
+      this.pop();
+    }
     //accessible outputs
     if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
       this._accsOutput('rectangle', [vals.x, vals.y, vals.w, vals.h]);
@@ -1453,6 +1481,29 @@ p5.prototype.triangle = function(...args) {
 
   if (this._renderer._doStroke || this._renderer._doFill) {
     this._renderer.triangle(args);
+    if (this._shadowEnabled) {
+      const shadowOffset = this._shadowOffset;
+      const x1 = args[0], y1 = args[1];
+      const x2 = args[2], y2 = args[3];
+      const x3 = args[4], y3 = args[5];
+      //Find center Y (mirror axis)
+      const centerY = (y1 + y2 + y3) / 3;
+
+      //Mirror each Y + push downward (shadow offset)
+      const my1 = 2 * centerY - y1 + shadowOffset;
+      const my2 = 2 * centerY - y2 + shadowOffset;
+      const my3 = 2 * centerY - y3 + shadowOffset;
+
+      this.push();
+      this.fill(0, 0, 0, 50);
+
+      this._renderer.triangle([
+        x1, my1,
+        x2, my2,
+        x3, my3
+      ]);
+      this.pop();
+    }
   }
 
   //accessible outputs
