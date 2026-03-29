@@ -70,6 +70,38 @@ suite('2D Primitives', function() {
         myp5.ellipse('a', 0, 100, 100);
       });
     });
+    test('does not draw shadow when disabled', function() {
+      let callCount = 0;
+
+      const original = myp5._renderer.ellipse;
+      myp5._renderer.ellipse = function() {
+        callCount++;
+      };
+
+      myp5._shadowEnabled = false;
+      myp5.ellipse(50, 50, 100, 100);
+
+      assert.equal(callCount, 1, 'should only draw once (no shadow)');
+
+      myp5._renderer.ellipse = original;
+    });
+    test('draws shadow when enabled', function() {
+      let callCount = 0;
+
+      const original = myp5._renderer.ellipse;
+      myp5._renderer.ellipse = function() {
+        callCount++;
+      };
+
+      myp5._shadowEnabled = true;
+      myp5._shadowOffset = 10;
+
+      myp5.ellipse(50, 50, 100, 100);
+
+      assert.equal(callCount, 2, 'should draw twice (shape + shadow)');
+
+      myp5._renderer.ellipse = original;
+    });
   });
 
   suite('p5.prototype.line', function() {
