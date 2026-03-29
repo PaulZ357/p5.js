@@ -12,6 +12,7 @@ var spec = {
     'p5.Graphics',
     'preload',
     'rendering',
+    'sample-unit-test',
     'structure',
     'transform',
     'version',
